@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ask Questions</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #000428, #004e92);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            max-width: 600px;
+            width: 90%;
+            margin: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #00d4ff;
+            text-shadow: 0 0 5px rgba(0, 212, 255, 0.8), 0 0 10px rgba(0, 212, 255, 0.6);
+        }
+
+        input[type="text"], select {
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px solid #00d4ff;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #001f3f;
+            color: #00d4ff;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        input[type="submit"] {
+            background-color: #00d4ff;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00a0cc;
+            color: #fff;
+        }
+
+        .answer {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            color: #00d4ff;
+            text-shadow: 0 0 5px rgba(0, 212, 255, 0.8), 0 0 10px rgba(0, 212, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            max-width: 100%;
+            box-sizing: border-box;
+            text-align: left; /* Align text content to the left */
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: #ccc;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            .container {
+                width: 100%;
+                padding: 20px;
+            }
+            input[type="text"], select {
+                font-size: 16px;
+            }
+            input[type="submit"] {
+                padding: 10px 15px;
+                font-size: 16px;
+            }
+            .answer {
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            .container {
+                padding: 15px;
+            }
+            input[type="text"], select {
+                font-size: 14px;
+            }
+            input[type="submit"] {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            .answer {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Ask Questions about your Dataset</h1>
+    <div class="container">
+        <form action="{{ url_for('questions') }}" method="post">
+            <select id="questionSelect" onchange="setQuestion()">
+                <option value="" disabled selected>Select a question</option>
+                <option value="mean of ">Mean of a column</option>
+                <option value="median of ">Median of a column</option>
+                <option value="max of ">Maximum value of a column</option>
+                <option value="min of ">Minimum value of a column</option>
+                <option value="sum of ">Sum of a column</option>
+                <option value="count rows">Count rows</option>
+                <option value="unique values in ">Unique values in a column</option>
+                <option value="count unique values in ">Count unique values in a column</option>
+                <option value="describe ">Describe a column</option>
+                <option value="standard deviation of ">Standard deviation of a column</option>
+                <option value="variance of ">Variance of a column</option>
+                <option value="column names">Column names</option>
+                <option value="missing values in ">Missing values in a column</option>
+                <option value="visualize ">Visualize a column</option>
+                <option value="scatter plot of ">Scatter plot of columns</option>
+                <option value="line graph of ">Line graph of column</option>
+                <option value="cluster data using ">Cluster data using a machine learning model</option>
+                <option value="classify data using ">Classify data using a machine learning model</option>
+                <option value="predict using ">Predict using a machine learning model</option>
+            </select>
+            <br>
+            <input type="text" id="questionInput" name="question" placeholder="Enter your question">
+            <br>
+            <input type="submit" value="Ask">
+        </form>
+        {% if answer %}
+            <div class="answer">
+                <h2>Answer:</h2>
+                {% if answer.endswith('.png') %}
+                    <img src="{{ answer }}" alt="Graph Image" style="max-width: 100%; height: auto;">
+                {% else %}
+                    <p>{{ answer }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="footer">Developed By: InnovateHers</div>
+
+    <script>
+        function setQuestion() {
+            var selectBox = document.getElementById("questionSelect");
+            var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+            document.getElementById("questionInput").value = selectedValue;
+        }
+    </script>
+</body>
+</html>
